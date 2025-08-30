@@ -1,0 +1,55 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "a556f2fdb24865addc40",
+  "position": {
+    "x": 504.96362166531929,
+    "y": 14.486661277283751,
+    "z": 2,
+    "height": 245.23848019401777,
+    "width": 359.06224737267581
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Metricas"
+                    }
+                  },
+                  "Property": "Costo USD"
+                }
+              },
+              "queryRef": "Metricas.Costo USD",
+              "nativeQueryRef": "Costo USD"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "5d267e7b92455614319f",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Metricas"
+              }
+            },
+            "Property": "Costo USD"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

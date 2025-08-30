@@ -1,0 +1,101 @@
+table Tienda
+	lineageTag: 817a7fc8-c00b-4523-b30b-5624b1701680
+
+	column StoreKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 0b0d8179-ef4c-4ad3-acac-eb5c11dbd043
+		summarizeBy: none
+		sourceColumn: StoreKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CodigoTienda
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b10041f-b970-4576-b116-9eba314b26b0
+		summarizeBy: count
+		sourceColumn: CodigoTienda
+
+		annotation SummarizationSetBy = Automatic
+
+	column GeoAreaKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 50d716cb-2e9a-4bbf-bef0-da2675c9936e
+		summarizeBy: count
+		sourceColumn: GeoAreaKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column StateKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 48bfdb26-1928-478a-827b-f14517d8993a
+		summarizeBy: none
+		sourceColumn: StateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column FechaApertura
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f7f629b9-4110-41f8-88e5-20339d1b6c04
+		summarizeBy: none
+		sourceColumn: FechaApertura
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column FechaCierre
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8d4ff544-0cd6-4fda-9dcf-703dd4dfd50e
+		summarizeBy: none
+		sourceColumn: FechaCierre
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Descripcion
+		dataType: string
+		lineageTag: 5955f6cb-a555-4fdd-8591-9a4ad395b8f7
+		summarizeBy: none
+		sourceColumn: Descripcion
+
+		annotation SummarizationSetBy = Automatic
+
+	column MetrosCuadrados
+		dataType: int64
+		formatString: 0
+		lineageTag: 06c28ed1-51d4-4fa3-98ed-0bee6e279298
+		summarizeBy: sum
+		sourceColumn: MetrosCuadrados
+
+		annotation SummarizationSetBy = Automatic
+
+	column Estado
+		dataType: string
+		lineageTag: ad6ce74a-a95c-42b8-8213-2e279b0c1aac
+		summarizeBy: none
+		sourceColumn: Estado
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Tienda = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    Data_Store = assesment{[Schema="Data",Item="Store"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(Data_Store,{{"StoreCode", "CodigoTienda"}, {"OpenDate", "FechaApertura"}, {"CloseDate", "FechaCierre"}, {"Description", "Descripcion"}, {"SquareMeters", "MetrosCuadrados"}, {"Status", "Estado"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

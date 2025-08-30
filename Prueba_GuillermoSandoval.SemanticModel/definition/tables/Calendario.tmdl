@@ -1,0 +1,170 @@
+table Calendario
+	lineageTag: 144f9b4b-1949-4693-832f-e2a145fa1a67
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c2c11960-a140-4aa2-8e1a-edd4193a9f9b
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Dia
+		dataType: string
+		lineageTag: 54759714-4be4-40ae-a1db-7cf30bd14798
+		summarizeBy: none
+		sourceColumn: Dia
+
+		annotation SummarizationSetBy = Automatic
+
+	column NombreTrimestre
+		dataType: string
+		lineageTag: 7bab90fa-d706-424e-8ed5-45fe4f559056
+		summarizeBy: none
+		sourceColumn: NombreTrimestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes
+		dataType: string
+		lineageTag: 57ac9374-6dce-4402-8225-0d6e75039f19
+		summarizeBy: none
+		sourceColumn: Mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaDelAño
+		dataType: int64
+		formatString: 0
+		lineageTag: 2ad2b13b-bc86-496b-9146-e8de4fcaa538
+		summarizeBy: sum
+		sourceColumn: DiaDelAño
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaDelMes
+		dataType: int64
+		formatString: 0
+		lineageTag: bd2f6acb-5a26-4339-b877-16a7892ebbf0
+		summarizeBy: sum
+		sourceColumn: DiaDelMes
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaDeLaSemana
+		dataType: int64
+		formatString: 0
+		lineageTag: 2b87f805-2246-4740-a88a-c9d596f13f44
+		summarizeBy: sum
+		sourceColumn: DiaDeLaSemana
+
+		annotation SummarizationSetBy = Automatic
+
+	column SemanaDelAño
+		dataType: int64
+		formatString: 0
+		lineageTag: 0eeabf45-ab15-4ca3-9379-22c086ad69cb
+		summarizeBy: sum
+		sourceColumn: SemanaDelAño
+
+		annotation SummarizationSetBy = Automatic
+
+	column MesDelAño
+		dataType: int64
+		formatString: 0
+		lineageTag: bdda173c-52b4-419a-8cd5-88d4de31c107
+		summarizeBy: sum
+		sourceColumn: MesDelAño
+
+		annotation SummarizationSetBy = Automatic
+
+	column MesDelTrimestre
+		dataType: int64
+		formatString: 0
+		lineageTag: 1cb44b40-8652-4bb2-9a55-1e7c9023be6b
+		summarizeBy: sum
+		sourceColumn: MesDelTrimestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column TrimestreDelAño
+		dataType: int64
+		formatString: 0
+		lineageTag: a9e9f933-7f2e-4f35-a7e5-7149e4b58fc2
+		summarizeBy: sum
+		sourceColumn: TrimestreDelAño
+
+		annotation SummarizationSetBy = Automatic
+
+	column SemanaISO
+		dataType: int64
+		formatString: 0
+		lineageTag: bd65d447-dd9c-419c-a46e-78e782ce8cc6
+		summarizeBy: sum
+		sourceColumn: SemanaISO
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiasUltimoMes
+		dataType: int64
+		formatString: 0
+		lineageTag: 6b5301b9-b718-4b69-9470-95af06e739c0
+		summarizeBy: sum
+		sourceColumn: DiasUltimoMes
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiasEsteMes
+		dataType: int64
+		formatString: 0
+		lineageTag: eddfcfef-87c3-47aa-9004-f3cce5a69db3
+		summarizeBy: sum
+		sourceColumn: DiasEsteMes
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiasEnSiguienteMes
+		dataType: int64
+		formatString: 0
+		lineageTag: 3e859063-4d82-40ec-bf3c-3533eb821b37
+		summarizeBy: sum
+		sourceColumn: DiasEnSiguienteMes
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiasSiguientes3Meses
+		dataType: int64
+		formatString: 0
+		lineageTag: cd74e45e-9d17-4541-8897-42873b8fa20a
+		summarizeBy: sum
+		sourceColumn: DiasSiguientes3Meses
+
+		annotation SummarizationSetBy = Automatic
+
+	column AñoBisiesto
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 0034b4c4-9cc3-413b-92e8-60cbeacb5368
+		summarizeBy: none
+		sourceColumn: AñoBisiesto
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendario = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    dbo_Calendario = assesment{[Schema="dbo",Item="Calendario"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(dbo_Calendario,{{"Date", "Fecha"}, {"DateName", "Dia"}, {"MonthName", "Mes"}, {"DayOfYear", "DiaDelAño"}, {"DayOfMonth", "DiaDelMes"}, {"DayOfWeek", "DiaDeLaSemana"}, {"WeekOfYear", "SemanaDelAño"}, {"MonthOfYear", "MesDelAño"}, {"QuarterName", "NombreTrimestre"}, {"MonthOfQuarter", "MesDelTrimestre"}, {"QuarterOfYear", "TrimestreDelAño"}, {"WeekISO", "SemanaISO"}, {"DaysNextMonth", "DiasEnSiguienteMes"}, {"DaysThisMonth", "DiasEsteMes"}, {"DaysLastMonth", "DiasUltimoMes"}, {"DaysNext3Months", "DiasSiguientes3Meses"}, {"LeapYear", "AñoBisiesto"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

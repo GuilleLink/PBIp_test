@@ -1,0 +1,51 @@
+table Estado
+	lineageTag: a452a259-0a9a-4fb0-9d9f-3d95371ffa0f
+
+	column StateKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 473baef3-1025-4d87-b399-ace6ad93091b
+		summarizeBy: none
+		sourceColumn: StateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CodigoPais
+		dataType: string
+		lineageTag: 9f24959d-c173-4861-8bec-aafa7de0c98b
+		summarizeBy: none
+		sourceColumn: CodigoPais
+
+		annotation SummarizationSetBy = Automatic
+
+	column CodigoEstado
+		dataType: string
+		lineageTag: 735d02b3-9098-432e-a216-692703e03001
+		summarizeBy: none
+		sourceColumn: CodigoEstado
+
+		annotation SummarizationSetBy = Automatic
+
+	column NombreEstado
+		dataType: string
+		lineageTag: de1e1ce7-c0c3-4c22-b188-1c7e1e845cc7
+		summarizeBy: none
+		sourceColumn: NombreEstado
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Estado = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    Data_State = assesment{[Schema="Data",Item="State"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(Data_State,{{"CountryCode", "CodigoPais"}, {"StateCode", "CodigoEstado"}, {"StateName", "NombreEstado"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

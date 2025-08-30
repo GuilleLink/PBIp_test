@@ -1,0 +1,73 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "a721f38d5c6da08bd384",
+  "position": {
+    "x": 901.27728375101049,
+    "y": 14.486661277283751,
+    "z": 0,
+    "height": 245.23848019401777,
+    "width": 362.16653193209379
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Metricas"
+                    }
+                  },
+                  "Property": "Descuento USD"
+                }
+              },
+              "queryRef": "Metricas.Descuento USD",
+              "nativeQueryRef": "Descuento USD"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Metricas"
+                  }
+                },
+                "Property": "Descuento USD"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "3fe4e895c20a78679e97",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Metricas"
+              }
+            },
+            "Property": "Descuento USD"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

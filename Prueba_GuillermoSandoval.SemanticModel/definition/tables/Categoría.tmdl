@@ -1,0 +1,35 @@
+table Categoría
+	lineageTag: 5b182a89-527f-456e-9404-678f957c30b2
+
+	column CategoryKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 0cec5731-4129-4a8a-bf1a-c32ad7f6d8ba
+		summarizeBy: none
+		sourceColumn: CategoryKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column NombreCategoria
+		dataType: string
+		lineageTag: 6dbf9803-877a-44b9-b684-3eb67a37292a
+		summarizeBy: none
+		sourceColumn: NombreCategoria
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Categoría = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    Data_Category = assesment{[Schema="Data",Item="Category"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(Data_Category,{{"CategoryName", "NombreCategoria"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

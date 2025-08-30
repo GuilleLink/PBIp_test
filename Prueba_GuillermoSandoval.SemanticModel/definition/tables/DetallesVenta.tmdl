@@ -1,0 +1,85 @@
+table DetallesVenta
+	lineageTag: 7f233e32-dc89-423c-9d5b-ccda17da2fc7
+
+	column OrderKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 37b2ba15-d10e-407a-a09b-526b6eacb6f7
+		summarizeBy: none
+		sourceColumn: OrderKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column NumeroLinea
+		dataType: int64
+		formatString: 0
+		lineageTag: f960732e-548a-428b-a473-7e60c337d041
+		summarizeBy: sum
+		sourceColumn: NumeroLinea
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: af422b7e-836c-42cc-8152-44cf61b68b14
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cantidad
+		dataType: double
+		lineageTag: 6a039d5c-0a7a-4a6f-9b5f-d49021d658ce
+		summarizeBy: sum
+		sourceColumn: Cantidad
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PrecioUnitario
+		dataType: double
+		lineageTag: a011c59f-cf5f-4f3d-b8a9-888a35fab049
+		summarizeBy: sum
+		sourceColumn: PrecioUnitario
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PrecioNeto
+		dataType: double
+		lineageTag: d4b0c073-8ea7-4fa6-ac3e-4c01c192cdcb
+		summarizeBy: sum
+		sourceColumn: PrecioNeto
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CostoUnitario
+		dataType: double
+		lineageTag: 12571e78-58ae-4e92-a5f1-660e65788f73
+		summarizeBy: sum
+		sourceColumn: CostoUnitario
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition DetallesVenta = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    Data_Sales_Details = assesment{[Schema="Data",Item="Sales_Details"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(Data_Sales_Details,{{"LineNumber", "NumeroLinea"}, {"Quantity", "Cantidad"}, {"UnitPrice", "PrecioUnitario"}, {"NetPrice", "PrecioNeto"}, {"UnitCost", "CostoUnitario"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

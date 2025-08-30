@@ -1,0 +1,37 @@
+relationship eafa505a-eee4-c805-b29c-c336f181537f
+	fromColumn: Producto.CategoryKey
+	toColumn: Categoría.CategoryKey
+
+relationship 957c0182-c75b-a61b-b85d-d1ed35b8be97
+	fromColumn: Producto.SubCategoryKey
+	toColumn: SubCategoría.SubCategoryKey
+
+relationship b6bf4148-6c7f-7d02-ad48-4ab60c3a63f2
+	fromColumn: Estado.CodigoPais
+	toColumn: País.CodigoPais
+
+relationship 33909682-e94f-73b2-bd49-45997ab60d42
+	fromColumn: Encabezado_Ventas.CustomerKey
+	toColumn: Cliente.CustomerKey
+
+relationship 7395db13-e243-5428-4ec9-555f84719f2e
+	fromColumn: Encabezado_Ventas.StoreKey
+	toColumn: Tienda.StoreKey
+
+relationship 986ba063-6b0b-12d1-1a7d-246be5996c16
+	fromColumn: Tienda.StateKey
+	toColumn: Estado.StateKey
+
+relationship bd8cc2c2-befc-50aa-0321-cf1a4e25c149
+	fromColumn: DetallesVenta.OrderKey
+	toColumn: Encabezado_Ventas.OrderKey
+
+relationship 0dffbb1d-0691-59f7-3330-43bcd303cf4e
+	fromColumn: DetallesVenta.ProductKey
+	toColumn: Producto.ProductKey
+
+relationship 3203f1a8-c898-1087-9fd9-1c50f4882e42
+	isActive: false
+	fromColumn: Cliente.StateKey
+	toColumn: Estado.StateKey
+

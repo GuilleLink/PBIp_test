@@ -1,0 +1,34 @@
+table País
+	lineageTag: c2b418d7-4488-44af-a487-81f660df07f4
+
+	column CodigoPais
+		dataType: string
+		lineageTag: 92c974ee-04f0-4342-a604-b01160b92553
+		summarizeBy: none
+		sourceColumn: CodigoPais
+
+		annotation SummarizationSetBy = Automatic
+
+	column NombrePais
+		dataType: string
+		lineageTag: 2b51b6e3-6ab7-4ad5-af2e-3f59399b60da
+		summarizeBy: none
+		sourceColumn: NombrePais
+
+		annotation SummarizationSetBy = Automatic
+
+	partition País = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    Data_Country = assesment{[Schema="Data",Item="Country"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(Data_Country,{{"CountryCode", "CodigoPais"}, {"CountryName", "NombrePais"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

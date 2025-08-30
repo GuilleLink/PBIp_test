@@ -1,0 +1,203 @@
+table Cliente
+	lineageTag: 12b93888-37e6-46e3-b4d0-fcb04b047e8e
+
+	column CustomerKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 43bdebe3-a18f-4f9c-8368-1ced98bf6d6e
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column GeoAreaKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 7e802ec6-e14c-4c1a-8b87-67342ba482ed
+		summarizeBy: none
+		sourceColumn: GeoAreaKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column FechaInicio
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f429df78-bc90-44c8-9419-00d7c073c06b
+		summarizeBy: none
+		sourceColumn: FechaInicio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column FechaFin
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 168da773-04df-433c-8263-2736c1ae3b11
+		summarizeBy: none
+		sourceColumn: FechaFin
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Continente
+		dataType: string
+		lineageTag: 414bea4c-4ffd-4af8-aa75-fc341a873f41
+		summarizeBy: none
+		sourceColumn: Continente
+
+		annotation SummarizationSetBy = Automatic
+
+	column Genero
+		dataType: string
+		lineageTag: de30b157-51c9-49ab-a58f-cb02dabb70ef
+		summarizeBy: none
+		sourceColumn: Genero
+
+		annotation SummarizationSetBy = Automatic
+
+	column Titulo
+		dataType: string
+		lineageTag: 9e46d407-4e5f-4500-8b8d-11d22d52669d
+		summarizeBy: none
+		sourceColumn: Titulo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nombre
+		dataType: string
+		lineageTag: a857ef17-50fa-49f3-abff-d8d032ad507d
+		summarizeBy: none
+		sourceColumn: Nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column InicialSegundoNombre
+		dataType: string
+		lineageTag: 572a3a3a-7c5c-428c-b74f-e9b611911961
+		summarizeBy: none
+		sourceColumn: InicialSegundoNombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column Apellido
+		dataType: string
+		lineageTag: 6cf8095b-a5a2-463a-be5f-c9029106b9f8
+		summarizeBy: none
+		sourceColumn: Apellido
+
+		annotation SummarizationSetBy = Automatic
+
+	column Direccion
+		dataType: string
+		lineageTag: de658b3a-ca66-41e9-aebc-9f8812ffaf2f
+		summarizeBy: none
+		sourceColumn: Direccion
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ciudad
+		dataType: string
+		lineageTag: 9ff72722-e0a7-4d0f-808a-17aee19fb01b
+		summarizeBy: none
+		sourceColumn: Ciudad
+
+		annotation SummarizationSetBy = Automatic
+
+	column CodigoPostal
+		dataType: string
+		lineageTag: f8899e17-a572-49d3-bc72-761161c51af2
+		summarizeBy: none
+		sourceColumn: CodigoPostal
+
+		annotation SummarizationSetBy = Automatic
+
+	column StateKey
+		dataType: int64
+		formatString: 0
+		lineageTag: b03f1c04-a39c-403c-938c-0035bdf3b011
+		summarizeBy: none
+		sourceColumn: StateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column FechaCumpleaños
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: fcd89f30-fe28-456d-a691-cabc7849bd9e
+		summarizeBy: none
+		sourceColumn: FechaCumpleaños
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Edad
+		dataType: int64
+		formatString: 0
+		lineageTag: c1d7ff2b-5f2d-4085-a2f9-48b0abed6e52
+		summarizeBy: none
+		sourceColumn: Edad
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ocupacion
+		dataType: string
+		lineageTag: fd4f1b3a-bf20-4092-9e54-8b5f6f4005d5
+		summarizeBy: none
+		sourceColumn: Ocupacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column Compañia
+		dataType: string
+		lineageTag: 4709c76c-76a3-4c7f-bee5-2c7b5891978e
+		summarizeBy: none
+		sourceColumn: Compañia
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vehiculo
+		dataType: string
+		lineageTag: 6e65e3f5-e283-4b2a-a956-e3533cb43da7
+		summarizeBy: none
+		sourceColumn: Vehiculo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lalitud
+		dataType: double
+		lineageTag: 55633475-b67c-43a2-8d94-0272e02e29cc
+		summarizeBy: none
+		sourceColumn: Lalitud
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Longitud
+		dataType: double
+		lineageTag: 3d3cc4aa-7aac-401f-b1d2-f7d30ea64e33
+		summarizeBy: none
+		sourceColumn: Longitud
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Cliente = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    Data_Customer = assesment{[Schema="Data",Item="Customer"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(Data_Customer,{{"Continent", "Continente"}, {"Gender", "Genero"}, {"Title", "Titulo"}, {"GivenName", "Nombre"}, {"MiddleInitial", "InicialSegundoNombre"}, {"Surname", "Apellido"}, {"StreetAddress", "Direccion"}, {"City", "Ciudad"}, {"ZipCode", "CodigoPostal"}, {"Birthday", "FechaCumpleaños"}, {"Age", "Edad"}, {"Occupation", "Ocupacion"}, {"Company", "Compañia"}, {"Vehicle", "Vehiculo"}, {"Latitude", "Lalitud"}, {"Longitude", "Longitud"}, {"StartDT", "FechaInicio"}, {"EndDT", "FechaFin"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

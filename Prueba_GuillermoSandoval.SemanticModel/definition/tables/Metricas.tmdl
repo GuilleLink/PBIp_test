@@ -1,0 +1,137 @@
+table Metricas
+	lineageTag: a369bd9b-11cd-40ca-b6de-13f9f8d087d8
+
+	measure VentaUSD =
+			
+			SUMX (
+			    DetallesVenta,
+			    VAR fecha  = RELATED ( Encabezado_Ventas[FechaOrden] )
+			    VAR moneda = RELATED ( Encabezado_Ventas[CodigoMoneda] )
+			    VAR tasa =
+			        LOOKUPVALUE (
+			            Tasa_De_Cambio[Cambio],
+			            Tasa_De_Cambio[Fecha],          fecha,
+			            Tasa_De_Cambio[MonedaOrigen],   moneda,
+			            Tasa_De_Cambio[MonedaDestino],  "USD"
+			        )
+			    RETURN DetallesVenta[PrecioNeto] * DetallesVenta[Cantidad] * tasa
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: e0be5e95-eaba-4fab-ad54-f428051ffa3f
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Costo USD' =
+			
+			SUMX (
+			    DetallesVenta,
+			    VAR fecha  = RELATED ( Encabezado_Ventas[FechaOrden] )
+			    VAR moneda = RELATED ( Encabezado_Ventas[CodigoMoneda] )
+			    VAR tasa =
+			        LOOKUPVALUE (
+			            Tasa_De_Cambio[Cambio],
+			            Tasa_De_Cambio[Fecha],          fecha,
+			            Tasa_De_Cambio[MonedaOrigen],   moneda,
+			            Tasa_De_Cambio[MonedaDestino],  "USD"
+			        )
+			    RETURN DetallesVenta[CostoUnitario] * DetallesVenta[Cantidad] * tasa
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: fc3e1bbd-c0f8-4b8b-b226-ecbb765c6ece
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Descuento USD' =
+			
+			SUMX (
+			    DetallesVenta,
+			    VAR fecha  = RELATED ( Encabezado_Ventas[FechaOrden] )
+			    VAR moneda = RELATED ( Encabezado_Ventas[CodigoMoneda] )
+			    VAR tasa =
+			        LOOKUPVALUE (
+			            Tasa_De_Cambio[Cambio],
+			            Tasa_De_Cambio[Fecha],         fecha,
+			            Tasa_De_Cambio[MonedaOrigen],  moneda,
+			            Tasa_De_Cambio[MonedaDestino], "USD"
+			        )
+			    RETURN (DetallesVenta[PrecioUnitario] - DetallesVenta[PrecioNeto]) * DetallesVenta[Cantidad] * tasa
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 01e036ca-c112-4560-9118-bdc11b01b79c
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Margen USD' = [VentaUSD] - [Descuento USD] - [Costo USD]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 0d5f0ba8-0136-4408-8378-a405048656f0
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure Cantidad = SUM (DetallesVenta[Cantidad])
+		formatString: 0
+		lineageTag: 84e31a36-b5cf-4e64-9895-4a497cbf6047
+
+	measure 'Ticket Promedio' = DIVIDE ( [VentaUSD], DISTINCTCOUNT ( Encabezado_Ventas[OrderKey] ) )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 50ae98db-1808-429d-8159-bd2e96f69717
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Precio Promedio USD' = DIVIDE ( [VentaUSD], [Cantidad] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: a61b43c8-f46b-44f8-b57f-32cfce6c9903
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure Kilogramos =
+			
+			SUMX (
+			    DetallesVenta,
+			    VAR peso       = RELATED ( Producto[Peso] )
+			    VAR unidad     = RELATED ( Producto[UnidadPeso] )
+			    VAR cantidad   = DetallesVenta[Cantidad]
+			    VAR pesoKg =
+			        SWITCH (
+			            TRUE(),
+			            unidad = "grams",  DIVIDE ( peso, 1000 ),
+			            unidad = "pounds", peso * 0.45359237,
+			            unidad = "ounces", peso * 0.0283495,
+			            BLANK()
+			        )
+			    RETURN pesoKg * cantidad
+			)
+		formatString: 0.000
+		lineageTag: 448c7d8f-c24c-4d47-8d96-9a9f720fffd2
+
+	measure 'Precio Promedio por Kilogramo' = DIVIDE ( [VentaUSD], [Kilogramos] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 0eaab2c1-9e4e-486b-a3d6-54353fea44bd
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Venta Promedio por Cliente' =
+			
+			DIVIDE ( [VentaUSD], DISTINCTCOUNT ( Encabezado_Ventas[CustomerKey] ) )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 488fd83a-f512-4fbb-b1f7-e311652500ea
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Unidades Promedio por Ticket' =
+			
+			DIVIDE ( [Cantidad], DISTINCTCOUNT ( Encabezado_Ventas[OrderKey] ) )
+		formatString: 0
+		lineageTag: 8e7eea09-2314-4526-821a-4d1f5629282b
+
+	partition Metricas = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

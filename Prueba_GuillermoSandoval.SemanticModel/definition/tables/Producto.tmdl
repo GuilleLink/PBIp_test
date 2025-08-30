@@ -1,0 +1,125 @@
+table Producto
+	lineageTag: 8ce04b7c-6151-4101-b531-61810244d77e
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 0a88541d-5f82-4d48-bbaa-2129167ccadf
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CodigoProducto
+		dataType: string
+		lineageTag: 535902fc-42cc-48d3-a95a-d3a436b4ea77
+		summarizeBy: none
+		sourceColumn: CodigoProducto
+
+		annotation SummarizationSetBy = Automatic
+
+	column NombreProducto
+		dataType: string
+		lineageTag: fa997f9c-829f-4586-9320-daaea596b160
+		summarizeBy: none
+		sourceColumn: NombreProducto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fabricante
+		dataType: string
+		lineageTag: 8da337e5-029a-4f4e-b706-39a18eb1c478
+		summarizeBy: none
+		sourceColumn: Fabricante
+
+		annotation SummarizationSetBy = Automatic
+
+	column Marca
+		dataType: string
+		lineageTag: 9813753b-46f8-4b55-8ddc-a09a562362a1
+		summarizeBy: none
+		sourceColumn: Marca
+
+		annotation SummarizationSetBy = Automatic
+
+	column Color
+		dataType: string
+		lineageTag: 97b2f8b2-f9e0-4879-814c-94e0724430a1
+		summarizeBy: none
+		sourceColumn: Color
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnidadPeso
+		dataType: string
+		lineageTag: 54aa7528-fed5-48a1-a687-840847ab4d63
+		summarizeBy: none
+		sourceColumn: UnidadPeso
+
+		annotation SummarizationSetBy = Automatic
+
+	column Peso
+		dataType: double
+		lineageTag: 21028602-53be-431d-a415-409d1c491f1d
+		summarizeBy: sum
+		sourceColumn: Peso
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Costo
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 4b61f407-a039-4a6c-8126-7dfc4d9c6a2b
+		summarizeBy: sum
+		sourceColumn: Costo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Precio
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: fd98c9f0-943e-4cab-b36d-74c60092b7b0
+		summarizeBy: sum
+		sourceColumn: Precio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column CategoryKey
+		dataType: int64
+		formatString: 0
+		lineageTag: a3706ef3-a88d-44e0-b151-16ef58673a6d
+		summarizeBy: none
+		sourceColumn: CategoryKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubCategoryKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 4d8010a5-0831-482a-9c4d-812a4cd11d0e
+		summarizeBy: none
+		sourceColumn: SubCategoryKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Producto = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    Data_Product = assesment{[Schema="Data",Item="Product"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(Data_Product,{{"ProductCode", "CodigoProducto"}, {"ProductName", "NombreProducto"}, {"Manufacturer", "Fabricante"}, {"Brand", "Marca"}, {"WeightUnit", "UnidadPeso"}, {"Weight", "Peso"}, {"Cost", "Costo"}, {"Price", "Precio"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

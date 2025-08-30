@@ -1,0 +1,75 @@
+table Encabezado_Ventas
+	lineageTag: 553d157e-9944-47b9-ae80-edfc6d010333
+
+	column OrderKey
+		dataType: int64
+		formatString: 0
+		lineageTag: b0288aa2-e29e-4cf4-8cdd-ad42f808ec10
+		summarizeBy: none
+		sourceColumn: OrderKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column FechaOrden
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 3b33ee92-e996-4971-996e-856ea2794230
+		summarizeBy: none
+		sourceColumn: FechaOrden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column FechaEntrega
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: fcb357be-7132-477d-bfaa-7203ac372e69
+		summarizeBy: none
+		sourceColumn: FechaEntrega
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column CustomerKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 8bc89cea-fd54-4520-98f3-763784be20cf
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column StoreKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 3c142820-29de-44d6-98f2-fcd8f0c76bc1
+		summarizeBy: none
+		sourceColumn: StoreKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CodigoMoneda
+		dataType: string
+		lineageTag: 672b8a83-a3d1-4cd5-99b7-c58901c24a3d
+		summarizeBy: none
+		sourceColumn: CodigoMoneda
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Encabezado_Ventas = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    Data_Sales_Header = assesment{[Schema="Data",Item="Sales_Header"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(Data_Sales_Header,{{"OrderDate", "FechaOrden"}, {"DeliveryDate", "FechaEntrega"}, {"CurrencyCode", "CodigoMoneda"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

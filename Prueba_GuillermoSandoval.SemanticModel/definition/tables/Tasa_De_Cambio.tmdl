@@ -1,0 +1,55 @@
+table Tasa_De_Cambio
+	lineageTag: c44c917f-04cc-41fa-8b0e-156c5e0a565a
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d735a7f3-0565-483a-af3b-a6ba9a06b179
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column MonedaOrigen
+		dataType: string
+		lineageTag: 9fa1d654-1d30-4b69-adb0-4c2ee109a54e
+		summarizeBy: none
+		sourceColumn: MonedaOrigen
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonedaDestino
+		dataType: string
+		lineageTag: b2375e0e-d4b6-4b15-a79c-a3a5aad66bed
+		summarizeBy: none
+		sourceColumn: MonedaDestino
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cambio
+		dataType: double
+		lineageTag: a541a867-5160-40dd-b2c0-4335d1e87680
+		summarizeBy: sum
+		sourceColumn: Cambio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Tasa_De_Cambio = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("tdw-assesment.cwb0siyssle1.us-east-1.rds.amazonaws.com"),
+				    assesment = Source{[Name="assesment"]}[Data],
+				    Data_CurrencyExchange = assesment{[Schema="Data",Item="CurrencyExchange"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(Data_CurrencyExchange,{{"Date", "Fecha"}, {"FromCurrency", "MonedaOrigen"}, {"ToCurrency", "MonedaDestino"}, {"Exchange", "Cambio"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
