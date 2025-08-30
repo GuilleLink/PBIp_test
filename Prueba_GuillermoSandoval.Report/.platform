@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Prueba_GuillermoSandoval"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "693b2169-7af0-4ba2-bcb4-96d372ec4c88"
+  }
+}
