@@ -1,8 +1,10 @@
 table Calendario
 	lineageTag: 144f9b4b-1949-4693-832f-e2a145fa1a67
+	dataCategory: Time
 
 	column Fecha
 		dataType: dateTime
+		isKey
 		formatString: Long Date
 		lineageTag: c2c11960-a140-4aa2-8e1a-edd4193a9f9b
 		summarizeBy: none

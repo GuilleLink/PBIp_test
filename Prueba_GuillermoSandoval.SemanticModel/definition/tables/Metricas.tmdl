@@ -17,6 +17,7 @@ table Metricas
 			    RETURN DetallesVenta[PrecioNeto] * DetallesVenta[Cantidad] * tasa
 			)
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Venta
 		lineageTag: e0be5e95-eaba-4fab-ad54-f428051ffa3f
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
@@ -37,6 +38,7 @@ table Metricas
 			    RETURN DetallesVenta[CostoUnitario] * DetallesVenta[Cantidad] * tasa
 			)
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Costo
 		lineageTag: fc3e1bbd-c0f8-4b8b-b226-ecbb765c6ece
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
@@ -57,28 +59,33 @@ table Metricas
 			    RETURN (DetallesVenta[PrecioUnitario] - DetallesVenta[PrecioNeto]) * DetallesVenta[Cantidad] * tasa
 			)
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Descuento
 		lineageTag: 01e036ca-c112-4560-9118-bdc11b01b79c
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
 	measure 'Margen USD' = [VentaUSD] - [Descuento USD] - [Costo USD]
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margen
 		lineageTag: 0d5f0ba8-0136-4408-8378-a405048656f0
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
 	measure Cantidad = SUM (DetallesVenta[Cantidad])
 		formatString: 0
+		displayFolder: Cantidad
 		lineageTag: 84e31a36-b5cf-4e64-9895-4a497cbf6047
 
 	measure 'Ticket Promedio' = DIVIDE ( [VentaUSD], DISTINCTCOUNT ( Encabezado_Ventas[OrderKey] ) )
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Ticket Promedio
 		lineageTag: 50ae98db-1808-429d-8159-bd2e96f69717
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
 	measure 'Precio Promedio USD' = DIVIDE ( [VentaUSD], [Cantidad] )
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Precio Promedio USD
 		lineageTag: a61b43c8-f46b-44f8-b57f-32cfce6c9903
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
@@ -101,10 +108,12 @@ table Metricas
 			    RETURN pesoKg * cantidad
 			)
 		formatString: 0.000
+		displayFolder: Kilogramos
 		lineageTag: 448c7d8f-c24c-4d47-8d96-9a9f720fffd2
 
 	measure 'Precio Promedio por Kilogramo' = DIVIDE ( [VentaUSD], [Kilogramos] )
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Precio Promedio por Kilogramo
 		lineageTag: 0eaab2c1-9e4e-486b-a3d6-54353fea44bd
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
@@ -113,6 +122,7 @@ table Metricas
 			
 			DIVIDE ( [VentaUSD], DISTINCTCOUNT ( Encabezado_Ventas[CustomerKey] ) )
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Venta Promedio por Cliente
 		lineageTag: 488fd83a-f512-4fbb-b1f7-e311652500ea
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
@@ -121,7 +131,923 @@ table Metricas
 			
 			DIVIDE ( [Cantidad], DISTINCTCOUNT ( Encabezado_Ventas[OrderKey] ) )
 		formatString: 0
+		displayFolder: Unidades promedio por Ticket
 		lineageTag: 8e7eea09-2314-4526-821a-4d1f5629282b
+
+	measure 'VentaUSD AA' = CALCULATE ( [VentaUSD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+		displayFolder: Venta
+		lineageTag: 61d5bae9-b096-4d6b-a66b-e93ba6c8f879
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var VentaUSD' = [VentaUSD] - [VentaUSD AA]
+		displayFolder: Venta
+		lineageTag: e6cd3116-7b9d-4b02-9f2b-6af9c05380d8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta VentaUSD' = DIVIDE ( [Var VentaUSD], [VentaUSD AA] )
+		displayFolder: Venta
+		lineageTag: e177b224-bec3-4d60-9627-4ac1e93415d6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo USD AA' = ```
+			CALCULATE ( [Costo USD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Costo
+		lineageTag: 9e384db6-f69f-49c6-b894-ba0557fa7580
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Costo USD' = ```
+			[Costo USD] - [Costo USD AA]
+			
+			```
+		displayFolder: Costo
+		lineageTag: 997b5bbe-b676-4a20-8a0d-939ff8bca081
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Costo USD' = ```
+			DIVIDE ( [Var Costo USD], [Costo USD AA] )
+			
+			```
+		displayFolder: Costo
+		lineageTag: c7ba64c3-0f55-446d-a5d9-29b5211bba4f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Margen USD AA' = ```
+			CALCULATE ( [Margen USD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Margen
+		lineageTag: 8bcabb2c-5be5-405d-9a4f-72e2be13da3e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Margen USD' = ```
+			[Margen USD] - [Margen USD AA]
+			
+			```
+		displayFolder: Margen
+		lineageTag: aad08a5f-4a9a-49a1-9bef-47b5a2528d29
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Margen USD' = DIVIDE ( [Var Margen USD], [Margen USD AA] )
+		displayFolder: Margen
+		lineageTag: 17c9c31e-0a4d-48a2-8d18-aeb7a87e0029
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cantidad AA' = ```
+			CALCULATE ( [Cantidad], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Cantidad
+		lineageTag: 4be94746-190f-41dd-a3e9-a3a6ffee934d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Cantidad' = ```
+			[Cantidad] - [Cantidad AA]
+			
+			```
+		displayFolder: Cantidad
+		lineageTag: cad4db1c-8320-40bb-aaed-e2b06b242417
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Cantidad' = ```
+			DIVIDE ( [Var Cantidad], [Cantidad AA] )
+			
+			```
+		displayFolder: Cantidad
+		lineageTag: 86bb2bc5-679c-4d02-9cde-85b43d28b0ef
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Kilogramos AA' = ```
+			CALCULATE ( [Kilogramos], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Kilogramos
+		lineageTag: 4b082150-d5d0-4b46-b16d-0f21cd00c710
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Kilogramos' = ```
+			[Kilogramos] - [Kilogramos AA]
+			
+			```
+		displayFolder: Kilogramos
+		lineageTag: 385809fc-533b-4743-aaf5-761d8d395bdd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Kilogramos' = DIVIDE ( [Var Kilogramos], [Kilogramos AA] )
+		displayFolder: Kilogramos
+		lineageTag: a2ec3853-dc31-48d9-bbb1-a3da572a625b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'VentaUSD MTD' = ```
+			TOTALMTD ( [VentaUSD], Calendario[Fecha] )
+			
+			```
+		displayFolder: Venta MTD
+		lineageTag: 8abd2f03-d19b-4a88-9181-21953a49e892
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'VentaUSD MTD AA' = ```
+			CALCULATE ( [VentaUSD MTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Venta MTD
+		lineageTag: 1ede5ed2-7b1f-4581-ba8d-dcfdcd3a11b4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var VentaUSD MTD' = ```
+			[VentaUSD MTD] - [VentaUSD MTD AA]
+			
+			```
+		displayFolder: Venta MTD
+		lineageTag: 5550b0f6-9801-4bae-b2a4-2c74ba6c403f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta VentaUSD MTD' = ```
+			DIVIDE ( [Var VentaUSD MTD], [VentaUSD MTD AA] )
+			
+			
+			```
+		displayFolder: Venta MTD
+		lineageTag: 3d33361b-bdee-4fe1-a6a8-5427fc0c89b1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo USD MTD' = ```
+			TOTALMTD ( [Costo USD], Calendario[Fecha] )
+			
+			```
+		displayFolder: Costo MTD
+		lineageTag: b18aeeb6-d416-4e35-b502-49499d70d963
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo USD MTD AA' = ```
+			CALCULATE ( [Costo USD MTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Costo MTD
+		lineageTag: f0ba999f-3978-40ad-903e-64536384f078
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Costo USD MTD' = ```
+			[Costo USD MTD] - [Costo USD MTD AA]
+			
+			```
+		displayFolder: Costo MTD
+		lineageTag: a0a485ca-a0e2-41ea-a7fc-beeb2f5b9a29
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Costo USD MTD' = DIVIDE ( [Var Costo USD MTD], [Costo USD MTD AA] )
+		displayFolder: Costo MTD
+		lineageTag: ac474a28-a242-4b6e-9f26-eb0735018a20
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Margen USD MTD' = TOTALMTD ( [Margen USD], Calendario[Fecha] )
+		displayFolder: Margen MTD
+		lineageTag: d770c5b3-d0ee-418f-8c07-43518e881e5d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Margen USD MTD AA' = CALCULATE ( [Margen USD MTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+		displayFolder: Margen MTD
+		lineageTag: b33e5cc4-36a5-488f-a41a-fca8a2664f16
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Margen USD MTD' = [Margen USD MTD] - [Margen USD MTD AA]
+		displayFolder: Margen MTD
+		lineageTag: 5680297f-a9b9-4ddc-ae05-803fcd43ea50
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Margen USD MTD' = DIVIDE ( [Var Margen USD MTD], [Margen USD MTD AA] )
+		displayFolder: Margen MTD
+		lineageTag: 6ab71b54-0416-495c-b869-3ecffa28397a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cantidad MTD' = TOTALMTD ( [Cantidad], Calendario[Fecha] )
+		displayFolder: Cantidad MTD
+		lineageTag: f9c61319-821c-45ad-b9ad-2f5e7a570c67
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cantidad MTD AA' = CALCULATE ( [Cantidad MTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+		displayFolder: Cantidad MTD
+		lineageTag: 64797878-8206-486c-bfba-5ca9393fb4ed
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Cantidad MTD' = [Cantidad MTD] - [Cantidad MTD AA]
+		displayFolder: Cantidad MTD
+		lineageTag: 9ca2cf9c-b38f-4204-a4d0-3973951915ff
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Cantidad MTD' = DIVIDE ( [Var Cantidad MTD], [Cantidad MTD AA] )
+		displayFolder: Cantidad MTD
+		lineageTag: 18bfab31-0e44-4978-a5f3-e744655b1f0e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Kilogramos MTD' = TOTALMTD ( [Kilogramos], Calendario[Fecha] )
+		displayFolder: Kilogramos MTD
+		lineageTag: 7c9313f3-a21a-4a9d-9149-7be9f443ad85
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Kilogramos MTD AA' = CALCULATE ( [Kilogramos MTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+		displayFolder: Kilogramos MTD
+		lineageTag: 795c3d96-210e-422d-9450-e5df853a83df
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Kilogramos MTD' = [Kilogramos MTD] - [Kilogramos MTD AA]
+		displayFolder: Kilogramos MTD
+		lineageTag: 90fe301a-203b-4f58-9bf9-4f86111482e8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Kilogramos MTD' = DIVIDE ( [Var Kilogramos MTD], [Kilogramos MTD AA] )
+		displayFolder: Kilogramos MTD
+		lineageTag: e81a39f6-eb04-4b8a-a779-5a8dee5f86e4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'VentaUSD YTD' = ```
+			TOTALYTD ( [VentaUSD], Calendario[Fecha] )
+			
+			```
+		displayFolder: Venta YTD
+		lineageTag: c1c58c1a-10d4-456a-827f-8a1a41ce5005
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'VentaUSD YTD AA' = ```
+			CALCULATE ( [VentaUSD YTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Venta YTD
+		lineageTag: 90d84f74-51b5-46b3-94fc-b437ae688be6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var VentaUSD YTD' = ```
+			[VentaUSD YTD] - [VentaUSD YTD AA]
+			
+			```
+		displayFolder: Venta YTD
+		lineageTag: b1ed2cdb-1685-4713-9ba1-31981a55338f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta VentaUSD YTD' = DIVIDE ( [Var VentaUSD YTD], [VentaUSD YTD AA] )
+		displayFolder: Venta YTD
+		lineageTag: a9fb4ecf-984a-4f72-9841-1326e58a9932
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo USD YTD' = ```
+			TOTALYTD ( [Costo USD], Calendario[Fecha] )
+			
+			```
+		displayFolder: Costo YTD
+		lineageTag: 29da48be-739e-4237-b41b-6164b8b928e3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo USD YTD AA' = ```
+			CALCULATE ( [Costo USD YTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Costo YTD
+		lineageTag: 74fdd3f4-baf6-40b8-b231-6bd9c4f62716
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Costo USD YTD' = ```
+			[Costo USD YTD] - [Costo USD YTD AA]
+			
+			```
+		displayFolder: Costo YTD
+		lineageTag: 43c0f937-8a2a-4db4-87ce-28e5f09fd8c0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Costo USD YTD' = DIVIDE ( [Var Costo USD YTD], [Costo USD YTD AA] )
+		displayFolder: Costo YTD
+		lineageTag: 2650bc0e-e56f-4d20-ad42-dd148ddb536c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Margen USD YTD' = ```
+			TOTALYTD ( [Margen USD], Calendario[Fecha] )
+			
+			```
+		displayFolder: Margen YTD
+		lineageTag: c1e32870-b15e-4961-9bef-302bfe973a58
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Margen USD YTD AA' = ```
+			CALCULATE ( [Margen USD YTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Margen YTD
+		lineageTag: 9e50134a-277d-4aad-84fa-2061e75106a7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Margen USD YTD' = ```
+			[Margen USD YTD] - [Margen USD YTD AA]
+			
+			```
+		displayFolder: Margen YTD
+		lineageTag: d76c6dbb-3b4d-4da5-abc7-6890b022ea0b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Margen USD YTD' = DIVIDE ( [Var Margen USD YTD], [Margen USD YTD AA] )
+		displayFolder: Margen YTD
+		lineageTag: 96dec837-5910-4b75-8998-288016e40905
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cantidad YTD' = ```
+			TOTALYTD ( [Cantidad], Calendario[Fecha] )
+			
+			```
+		displayFolder: Cantidad YTD
+		lineageTag: 54ba4656-d0ce-48f5-a8af-006f9e4f03ff
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cantidad YTD AA' = ```
+			CALCULATE ( [Cantidad YTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Cantidad YTD
+		lineageTag: 781646b9-9b3f-415a-8bc2-bf9e67a1bbcd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Cantidad YTD' = ```
+			[Cantidad YTD] - [Cantidad YTD AA]
+			
+			```
+		displayFolder: Cantidad YTD
+		lineageTag: 4a157da3-dbb4-47fa-9e5a-34cdf10af3da
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Cantidad YTD' = DIVIDE ( [Var Cantidad YTD], [Cantidad YTD AA] )
+		displayFolder: Cantidad YTD
+		lineageTag: 2afe4e6d-b963-4c22-ac17-d7ed08427fe4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Kilogramos YTD' = ```
+			TOTALYTD ( [Kilogramos], Calendario[Fecha] )
+			
+			```
+		displayFolder: Kilogramos YTD
+		lineageTag: df74519b-cb88-4514-8f37-c86fb5ce6c2a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Kilogramos YTD AA' = ```
+			CALCULATE ( [Kilogramos YTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Kilogramos YTD
+		lineageTag: 705e19bc-a01a-4bd3-9496-848d30ecfcc5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Kilogramos YTD' = [Kilogramos YTD] - [Kilogramos YTD AA]
+		displayFolder: Kilogramos YTD
+		lineageTag: 57a223b8-2f75-463c-8b4c-5e62cd76080e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Kilogramos YTD' = DIVIDE ( [Var Kilogramos YTD], [Kilogramos YTD AA] )
+		displayFolder: Kilogramos YTD
+		lineageTag: 97a2e928-bdf9-483e-b029-549d5d8dcefa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Descuento USD YTD' = TOTALYTD ( [Descuento USD], Calendario[Fecha] )
+		displayFolder: Descuento YTD
+		lineageTag: f4e84c75-2ccd-4f3e-9194-19b01f592a41
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Descuento USD YTD AA' = CALCULATE ( [Descuento USD YTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+		displayFolder: Descuento YTD
+		lineageTag: c7248d3c-2693-4d52-83ee-9795d9e9b0b9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Descuento USD YTD' = [Descuento USD YTD] - [Descuento USD YTD AA]
+		displayFolder: Descuento YTD
+		lineageTag: efa3dc6b-1338-440c-b2a3-bd7411cb29c1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Descuento USD YTD' = DIVIDE ( [Var Descuento USD YTD], [Descuento USD YTD AA] )
+		displayFolder: Descuento YTD
+		lineageTag: ebd02878-eed1-49de-ade3-c6d269f231fa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Descuento USD AA' = ```
+			CALCULATE ( [Descuento USD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+			
+			```
+		displayFolder: Descuento
+		lineageTag: ccaf2873-cf98-4f89-b77f-01783971159f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Descuento USD' = [Descuento USD] - [Descuento USD AA]
+		displayFolder: Descuento
+		lineageTag: 2a61e8fa-ccad-4d46-b934-49513afdecc3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Descuento USD' = DIVIDE ( [Var Descuento USD], [Descuento USD AA] )
+		displayFolder: Descuento
+		lineageTag: f39b3284-ad30-47be-9716-c3b51ac8accf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Descuento USD MTD' = TOTALMTD ( [Descuento USD], Calendario[Fecha] )
+		displayFolder: Descuento MTD
+		lineageTag: f1fb2f6e-741b-4e50-9977-a54ff7e44ed9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Descuento USD MTD AA' = CALCULATE ( [Descuento USD MTD], SAMEPERIODLASTYEAR ( Calendario[Fecha] ) )
+		displayFolder: Descuento MTD
+		lineageTag: 86e925e6-d356-4091-a69b-b5a99807f816
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Descuento USD MTD' = [Descuento USD MTD] - [Descuento USD MTD AA]
+		displayFolder: Descuento MTD
+		lineageTag: 3fde3c87-0e3c-43f2-9168-ec9d8b367e2c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Descuento USD MTD' = DIVIDE ( [Var Descuento USD MTD], [Descuento USD MTD AA] )
+		displayFolder: Descuento MTD
+		lineageTag: 7315c237-d91f-4779-a666-9cc0e2d32f5f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Tickets = DISTINCTCOUNT ( Encabezado_Ventas[OrderKey] )
+		formatString: 0
+		lineageTag: 626bbe4a-ea75-4cd0-9968-61255f903cdc
+
+	measure Clientes = DISTINCTCOUNT ( Encabezado_Ventas[CustomerKey] )
+		formatString: 0
+		lineageTag: 2cb26353-e2e5-4cf4-8719-3364679db751
+
+	measure 'Ticket Promedio MTD' =
+			
+			DIVIDE (
+			    TOTALMTD ( [VentaUSD], Calendario[Fecha] ),
+			    TOTALMTD ( [Tickets],   Calendario[Fecha] )
+			)
+		displayFolder: Ticket Promedio MTD
+		lineageTag: 5ca9c32c-927a-4be1-8c52-aa5ca6646025
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio USD MTD' =
+			
+			DIVIDE (
+			    TOTALMTD ( [VentaUSD], Calendario[Fecha] ),
+			    TOTALMTD ( [Cantidad],  Calendario[Fecha] )
+			)
+		displayFolder: Precio Promedio USD MTD
+		lineageTag: bd342799-014a-4879-afa2-26287c846d2e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio por Kilogramo MTD' =
+			
+			DIVIDE (
+			    TOTALMTD ( [VentaUSD],   Calendario[Fecha] ),
+			    TOTALMTD ( [Kilogramos],  Calendario[Fecha] )
+			)
+		displayFolder: Precio Promedio por Kilogramo MTD
+		lineageTag: 7fda1756-4a03-48ee-9897-975f6cba25b5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Venta Promedio por Cliente MTD' =
+			
+			DIVIDE (
+			    TOTALMTD ( [VentaUSD], Calendario[Fecha] ),
+			    TOTALMTD ( [Clientes],  Calendario[Fecha] )
+			)
+		displayFolder: Venta Promedio por Cliente MTD
+		lineageTag: 6a6afe41-8359-4bc6-9e13-4cf0f9d84ad5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Unidades Promedio por Ticket MTD' =
+			
+			DIVIDE (
+			    TOTALMTD ( [Cantidad], Calendario[Fecha] ),
+			    TOTALMTD ( [Tickets],  Calendario[Fecha] )
+			)
+		displayFolder: Unidades promedio por Ticket MTD
+		lineageTag: 8e85bedf-c09b-4782-9e52-42600d865fc4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ticket Promedio YTD' =
+			
+			DIVIDE (
+			    TOTALYTD ( [VentaUSD], Calendario[Fecha] ),
+			    TOTALYTD ( [Tickets],   Calendario[Fecha] )
+			)
+		displayFolder: Ticket Promedio YTD
+		lineageTag: accfb263-e791-42d6-9872-d09ebbf9b1a6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio USD YTD' =
+			
+			DIVIDE (
+			    TOTALYTD ( [VentaUSD], Calendario[Fecha] ),
+			    TOTALYTD ( [Cantidad],  Calendario[Fecha] )
+			)
+		displayFolder: Precio Promedio USD YTD
+		lineageTag: 492f1098-ba0d-49ab-80db-94a1cede18bf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio por Kilogramo YTD' =
+			
+			DIVIDE (
+			    TOTALYTD ( [VentaUSD],   Calendario[Fecha] ),
+			    TOTALYTD ( [Kilogramos],  Calendario[Fecha] )
+			)
+		displayFolder: Precio Promedio por Kilogramo YTD
+		lineageTag: 7e8df01d-be09-445b-a335-a22150bf09fa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Venta Promedio por Cliente YTD' =
+			
+			DIVIDE (
+			    TOTALYTD ( [VentaUSD], Calendario[Fecha] ),
+			    TOTALYTD ( [Clientes],  Calendario[Fecha] )
+			)
+		displayFolder: Venta Promedio por Cliente YTD
+		lineageTag: 5a93ddee-f399-4e7d-8135-93f8f71fe21f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Unidades Promedio por Ticket YTD' =
+			
+			DIVIDE (
+			    TOTALYTD ( [Cantidad], Calendario[Fecha] ),
+			    TOTALYTD ( [Tickets],  Calendario[Fecha] )
+			)
+		displayFolder: Unidades promedio por Ticket YTD
+		lineageTag: 1b799d89-1c5e-4967-bd59-915a4beb68b4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ticket Promedio AA' =
+			
+			DIVIDE(
+			    CALCULATE([VentaUSD], SAMEPERIODLASTYEAR(Calendario[Fecha])),
+			    CALCULATE([Tickets],   SAMEPERIODLASTYEAR(Calendario[Fecha]))
+			)
+		displayFolder: Ticket Promedio
+		lineageTag: 65422889-94cd-4a3d-96e2-815792f612af
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Ticket Promedio' = [Ticket Promedio] - [Ticket Promedio AA]
+		displayFolder: Ticket Promedio
+		lineageTag: 143bc73d-7a25-4a4a-bea5-662240cbcda4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Ticket Promedio' = DIVIDE([Var Ticket Promedio], [Ticket Promedio AA])
+		displayFolder: Ticket Promedio
+		lineageTag: 69c68205-1dca-4780-a314-6e3d101ff311
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ticket Promedio MTD AA' = CALCULATE([Ticket Promedio MTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Ticket Promedio MTD
+		lineageTag: f075040f-2644-428e-a718-46284ecb5acd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Ticket Promedio MTD' = [Ticket Promedio MTD] - [Ticket Promedio MTD AA]
+		displayFolder: Ticket Promedio MTD
+		lineageTag: be853581-d253-43bc-9363-5dd6588e003a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Ticket Promedio MTD' = ```
+			DIVIDE([Var Ticket Promedio MTD], [Ticket Promedio MTD AA])
+			
+			```
+		displayFolder: Ticket Promedio MTD
+		lineageTag: 54d41c4d-b857-46fd-8009-40ec2da56208
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ticket Promedio YTD AA' = CALCULATE([Ticket Promedio YTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Ticket Promedio YTD
+		lineageTag: 053d51c7-855d-4a3a-bcae-ed1e68701140
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Ticket Promedio YTD' = [Ticket Promedio YTD] - [Ticket Promedio YTD AA]
+		displayFolder: Ticket Promedio YTD
+		lineageTag: 2543cd77-d94c-4ac0-86c8-a51ff9365b4a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Ticket Promedio YTD' = DIVIDE([Var Ticket Promedio YTD], [Ticket Promedio YTD AA])
+		displayFolder: Ticket Promedio YTD
+		lineageTag: 7495cd8f-a25f-441f-969b-1728911869a8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio USD AA' =
+			
+			DIVIDE(
+			    CALCULATE([VentaUSD], SAMEPERIODLASTYEAR(Calendario[Fecha])),
+			    CALCULATE([Cantidad],  SAMEPERIODLASTYEAR(Calendario[Fecha]))
+			)
+		displayFolder: Precio Promedio USD
+		lineageTag: 4c2bbb2c-75ef-4c30-a971-49c3cd2bd461
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Precio Promedio USD' = [Precio Promedio USD] - [Precio Promedio USD AA]
+		displayFolder: Precio Promedio USD
+		lineageTag: 617c502c-0389-4867-b1cb-0774f670e197
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Precio Promedio USD' = DIVIDE([Var Precio Promedio USD], [Precio Promedio USD AA])
+		displayFolder: Precio Promedio USD
+		lineageTag: 472f4eb3-1b22-4397-8f48-e2069db2b19c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio USD MTD AA' = CALCULATE([Precio Promedio USD MTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Precio Promedio USD MTD
+		lineageTag: 8db4eee7-d6d5-4bf5-b8cb-8636c758284b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Precio Promedio USD MTD' = [Precio Promedio USD MTD] - [Precio Promedio USD MTD AA]
+		displayFolder: Precio Promedio USD MTD
+		lineageTag: f344e579-6e96-40a2-bfbf-773238814be0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Precio Promedio USD MTD' = DIVIDE([Var Precio Promedio USD MTD], [Precio Promedio USD MTD AA])
+		displayFolder: Precio Promedio USD MTD
+		lineageTag: 0e1cbe50-7ffb-43f6-b43c-031ceb6d18f3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio USD YTD AA' = CALCULATE([Precio Promedio USD YTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Precio Promedio USD YTD
+		lineageTag: 7e43ff74-2f1c-4b26-9d74-11b225305e38
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Precio Promedio USD YTD' = [Precio Promedio USD YTD] - [Precio Promedio USD YTD AA]
+		displayFolder: Precio Promedio USD YTD
+		lineageTag: 668d3693-4d3f-4280-9029-250d5aa5e13b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Precio Promedio USD YTD' = DIVIDE([Var Precio Promedio USD YTD], [Precio Promedio USD YTD AA])
+		displayFolder: Precio Promedio USD YTD
+		lineageTag: 3dcd4e92-9541-4bcc-85a2-6dc3e4ed0e92
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio por Kilogramo AA' =
+			
+			DIVIDE(
+			    CALCULATE([VentaUSD],  SAMEPERIODLASTYEAR(Calendario[Fecha])),
+			    CALCULATE([Kilogramos], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+			)
+		displayFolder: Precio Promedio por Kilogramo
+		lineageTag: 6faa1f7b-bb77-41d4-a25f-5c20fb9ed73d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Precio Promedio por Kilogramo' = [Precio Promedio por Kilogramo] - [Precio Promedio por Kilogramo AA]
+		displayFolder: Precio Promedio por Kilogramo
+		lineageTag: 244e825e-bccc-491b-8096-06261a9039e4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Precio Promedio por Kilogramo' = DIVIDE([Var Precio Promedio por Kilogramo], [Precio Promedio por Kilogramo AA])
+		displayFolder: Precio Promedio por Kilogramo
+		lineageTag: 879f9165-eae2-4357-ad56-60cd2a3b2a96
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio por Kilogramo MTD AA' = CALCULATE([Precio Promedio por Kilogramo MTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Precio Promedio por Kilogramo MTD
+		lineageTag: 74a7841c-4db7-433f-8e87-7c9a5482d02d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Precio Promedio por Kilogramo MTD' = [Precio Promedio por Kilogramo MTD] - [Precio Promedio por Kilogramo MTD AA]
+		displayFolder: Precio Promedio por Kilogramo MTD
+		lineageTag: 16049761-054e-4829-a135-f4abb7f3b060
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Precio Promedio por Kilogramo MTD' = ```
+			DIVIDE([Var Precio Promedio por Kilogramo MTD], [Precio Promedio por Kilogramo MTD AA])
+			
+			```
+		displayFolder: Precio Promedio por Kilogramo MTD
+		lineageTag: 28734cfd-9d1d-4a05-be8b-b6e9770c8aa0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio por Kilogramo YTD AA' = CALCULATE([Precio Promedio por Kilogramo YTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Precio Promedio por Kilogramo YTD
+		lineageTag: e0de9a5a-301e-409a-aaa1-7eeb7ec57c9c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Precio Promedio por Kilogramo YTD' = [Precio Promedio por Kilogramo YTD] - [Precio Promedio por Kilogramo YTD AA]
+		displayFolder: Precio Promedio por Kilogramo YTD
+		lineageTag: cf89ba5f-8f1a-46e8-9521-fe5542926aa4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Precio Promedio por Kilogramo YTD' = DIVIDE([Var Precio Promedio por Kilogramo YTD], [Precio Promedio por Kilogramo YTD AA])
+		displayFolder: Precio Promedio por Kilogramo YTD
+		lineageTag: 9c2f71ed-e288-4800-9602-b91c90f09e0b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Venta Promedio por Cliente AA' =
+			
+			DIVIDE(
+			    CALCULATE([VentaUSD], SAMEPERIODLASTYEAR(Calendario[Fecha])),
+			    CALCULATE([Clientes],  SAMEPERIODLASTYEAR(Calendario[Fecha]))
+			)
+		displayFolder: Venta Promedio por Cliente
+		lineageTag: a0d0fd79-fdc4-44ec-a47f-e85e8e4afafc
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Venta Promedio por Cliente' = [Venta Promedio por Cliente] - [Venta Promedio por Cliente AA]
+		displayFolder: Venta Promedio por Cliente
+		lineageTag: 99d40a13-aca1-4c5e-9bd0-540e9a0831d0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Venta Promedio por Cliente' = DIVIDE([Var Venta Promedio por Cliente], [Venta Promedio por Cliente AA])
+		displayFolder: Venta Promedio por Cliente
+		lineageTag: 98dcf5f8-91e7-4d82-84b1-e4dd2f6463d5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Venta Promedio por Cliente MTD AA' = CALCULATE([Venta Promedio por Cliente MTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Venta Promedio por Cliente MTD
+		lineageTag: a34052fe-93c1-4ad0-a80a-057395eb176c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Venta Promedio por Cliente MTD' = [Venta Promedio por Cliente MTD] - [Venta Promedio por Cliente MTD AA]
+		displayFolder: Venta Promedio por Cliente MTD
+		lineageTag: 935d31a0-d8d2-4d6f-97ee-f0a60b8667b3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Venta Promedio por Cliente MTD' = ```
+			DIVIDE([Var Venta Promedio por Cliente MTD], [Venta Promedio por Cliente MTD AA])
+			
+			```
+		displayFolder: Venta Promedio por Cliente MTD
+		lineageTag: 2b2f70cd-bbcb-4fd0-8900-fc623a64328a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Venta Promedio por Cliente YTD AA' = CALCULATE([Venta Promedio por Cliente YTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Venta Promedio por Cliente YTD
+		lineageTag: 7554590c-4db1-4b4c-9b96-3b8f221e9b8b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Venta Promedio por Cliente YTD' = [Venta Promedio por Cliente YTD] - [Venta Promedio por Cliente YTD AA]
+		displayFolder: Venta Promedio por Cliente YTD
+		lineageTag: 448c0189-ffb7-4433-977e-aff2aafbf7b9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Venta Promedio por Cliente YTD' = DIVIDE([Var Venta Promedio por Cliente YTD], [Venta Promedio por Cliente YTD AA])
+		displayFolder: Venta Promedio por Cliente YTD
+		lineageTag: 1ee3fa17-763b-494b-b1e0-74a26da95cd6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Unidades Promedio por Ticket AA' =
+			
+			DIVIDE(
+			    CALCULATE([Cantidad], SAMEPERIODLASTYEAR(Calendario[Fecha])),
+			    CALCULATE([Tickets],  SAMEPERIODLASTYEAR(Calendario[Fecha]))
+			)
+		displayFolder: Unidades promedio por Ticket
+		lineageTag: eb7e024b-acd4-4815-9630-86267cda0c14
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Unidades Promedio por Ticket' = [Unidades Promedio por Ticket] - [Unidades Promedio por Ticket AA]
+		displayFolder: Unidades promedio por Ticket
+		lineageTag: 17022a8a-51cd-4507-b224-99027f93ed7a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Unidades Promedio por Ticket' = DIVIDE([Var Unidades Promedio por Ticket], [Unidades Promedio por Ticket AA])
+		displayFolder: Unidades promedio por Ticket
+		lineageTag: 57ec2e69-3acd-4e4a-92ab-dedda94d13d1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Unidades Promedio por Ticket MTD AA' = CALCULATE([Unidades Promedio por Ticket MTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Unidades promedio por Ticket MTD
+		lineageTag: 8ad0338c-668c-434a-ad80-be6ef69d7a1d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Unidades Promedio por Ticket MTD' = [Unidades Promedio por Ticket MTD] - [Unidades Promedio por Ticket MTD AA]
+		displayFolder: Unidades promedio por Ticket MTD
+		lineageTag: 9701e8b5-972a-4508-8570-dd632d99a4cd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Unidades Promedio por Ticket MTD' = DIVIDE([Var Unidades Promedio por Ticket MTD], [Unidades Promedio por Ticket MTD AA])
+		displayFolder: Unidades promedio por Ticket MTD
+		lineageTag: 5879ef0c-eae5-4d62-a0ef-492315ab3910
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Unidades Promedio por Ticket YTD AA' = CALCULATE([Unidades Promedio por Ticket YTD], SAMEPERIODLASTYEAR(Calendario[Fecha]))
+		displayFolder: Unidades promedio por Ticket YTD
+		lineageTag: 6eef9e41-0a5a-4141-9bfc-7c974c67e5ce
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Var Unidades Promedio por Ticket YTD' = [Unidades Promedio por Ticket YTD] - [Unidades Promedio por Ticket YTD AA]
+		displayFolder: Unidades promedio por Ticket YTD
+		lineageTag: c53511e5-d46f-4488-a46d-de623ffea401
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Delta Unidades Promedio por Ticket YTD' = DIVIDE([Var Unidades Promedio por Ticket YTD], [Unidades Promedio por Ticket YTD AA])
+		displayFolder: Unidades promedio por Ticket YTD
+		lineageTag: fb36c720-acef-45c4-b20e-f448830d8feb
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	partition Metricas = m
 		mode: import
