@@ -1,0 +1,106 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "9a5423e0ada7ebaab903",
+  "position": {
+    "x": 10.347615198059822,
+    "y": 370.44462409054165,
+    "z": 3000,
+    "height": 300.08084074373483,
+    "width": 663.28213419563463
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Tienda"
+                    }
+                  },
+                  "Property": "Descripcion"
+                }
+              },
+              "queryRef": "Tienda.Descripcion",
+              "nativeQueryRef": "Descripcion",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Metricas"
+                    }
+                  },
+                  "Property": "VentaUSD"
+                }
+              },
+              "queryRef": "Metricas.VentaUSD",
+              "nativeQueryRef": "VentaUSD"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Metricas"
+                  }
+                },
+                "Property": "VentaUSD"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "fd33c09767e4adfe5c78",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Tienda"
+              }
+            },
+            "Property": "Descripcion"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "001487960738d7c87187",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Metricas"
+              }
+            },
+            "Property": "VentaUSD"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

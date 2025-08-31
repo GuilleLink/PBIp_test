@@ -186,6 +186,12 @@ table Cliente
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	column NombreCompleto = Cliente[Titulo] & " " & Cliente[Nombre] & " " & Cliente[InicialSegundoNombre] & ". " & Cliente[Apellido]
+		lineageTag: 6a2cc99d-17d4-475c-82bc-5d3fdbd7568e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Cliente = m
 		mode: import
 		source =
